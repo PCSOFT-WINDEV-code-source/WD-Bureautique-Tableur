@@ -1,0 +1,384 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : COL_TABLEUR
+ major_version : 28
+ minor_version : 0
+ type : 7
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x1a1e96ff009e4575
+ internal_properties : CAAAAAgAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  type_code : 31
+  p_codes :
+   -
+     code : |1-
+      
+      XSLXSélection est une Structure
+      	FeuilleActive est un booléen
+      	Cellule est une chaîne
+      	Plages est une chaîne
+      	LignesMasquées est un tableau d'entiers
+      	ColonnesMasquées est un tableau d'entiers
+      FIN
+     type : 720896
+  procedures :
+   -
+     name : XLSXChargeInfoCellules
+     internal_properties : CAAAAAgAAAChrYqro+W4nIRFJMM0cwjMB88Mf6lkBVphEs5vlU1UoWx83QBXpk7JTAgtrf3UKUumB1EWjQt8GSA7D33g7RH9UM8vf8Uo9ybz/78oSHA6o/FtyRsyKx84RtXCzQQysUbXpGvsuC7+CEYa34mqhnKwGLPQa4K3Rxt99qfC+wcwhMX1MvXbg775dFbX9EyoT7Iha6r21t5Lyq6yL93gVdHgFyJDlGXtvQWyqj3mtoKXPpmEw+egQmyafP/AC4o2fOjt7l8/+LivdETiPOAqpWceVTX/Pvo=
+     procedure_id : 1882107789273171901
+     type_code : 15
+     code : |1-
+      // Résumé : Renvoie les cellules sélectionnées mémorisées dans un fichier XSLSX
+      // Syntaxe :
+      //[ <Résultat> = ] XLSXChargeInfoCellules (<sChemin> est chaîne)
+      //
+      // Paramètres :
+      //	sChemin (chaîne ANSI) : Chemin du fichier XSLSX
+      // Valeur de retour :
+      // 	tableau : Cellules sélectionnées par feuille
+      //
+      PROCEDURE XLSXChargeInfoCellules(sChemin est une chaine) : tableau de XSLXSélection
+      
+      	stSélection est un XSLXSélection
+      	tabSélection est un tableau de XSLXSélection
+      	nIndiceFeuille est un entier = 1
+      
+      	// Lecture des infos annexes du fichier
+      	SI pas fExtraitChemin(sChemin, fExtension)[[2 À]] ~= "xlsx" ALORS renvoyer tabSélection
+      		
+      	XSLX est une zipArchive
+      	
+      	// Ouvre le fichier XLSX comme une archive ZIP
+      	SI zipOuvre(XSLX, sChemin, zipLecture) <> 0 ALORS renvoyer tabSélection
+      		
+      	tantque vrai
+      		
+      		// Par défaut
+      		VariableRAZ(stSélection)
+      		stSélection.Cellule = "A1"
+      		
+      		// Vérifie l'existence du fichier /xl/worksheets/sheet1.xml
+      		nDescSheet est un entier = Cherche(XSLX..Fichier, tcLinéaire, "Nom", "xl\worksheets\sheet[%nIndiceFeuille%].xml")
+      		SI nDescSheet < 1 ALORS sortir
+      						
+      		// Récupère le contenu du fichier /xl/worksheets/sheet<%1%>.xml
+      		zipFichierInfo est un zipFichierArchivé = XSLX.Fichier[ nDescSheet ]
+      		
+      		// Charge le document XML 
+      		xmlFichierInfo est un xmlDocument = xmlouvre( zipFichierInfo..Contenu , depuisChaîne)
+      		
+      		// Si on a pu charger le document XML et si l'information de sélection est disponible
+      		SI ErreurDétectée = Faux alors
+      			
+      			si xmlFichierInfo.worksheet.sheetViews.sheetView[1].selection..Existe ALORS
+      				
+      				// Marque la feuille active
+      				stSélection.FeuilleActive = xmlFichierInfo.worksheet.sheetViews.sheetView[1]:tabSelected..Vide = faux _et_ (xmlFichierInfo.worksheet.sheetViews.sheetView[1]:tabSelected..valeur = "1")
+      										
+      				// Lit la cellule active
+      				stSélection.Cellule = (xmlFichierInfo.worksheet.sheetViews.sheetView[1].selection:activeCell..Valeur)
+      				
+      				// Lit les autres plages actives
+      				stSélection.Plages = xmlFichierInfo.worksheet.sheetViews.sheetView[1].selection:sqref..Valeur
+      			fin
+      			
+      			SI xmlFichierInfo.worksheet.cols..Existe ALORS
+      				
+      				// Enumère les cols
+      				POUR TOUT 'col' de xmlFichierInfo.worksheet.cols sur col
+      					SI 'col':hidden..Valeur = "1" ALORS
+      						Ajoute(stSélection.ColonnesMasquées, Val( 'col':min..Valeur ))
+      					FIN
+      				FIN	
+      			FIN
+      			
+      			si xmlFichierInfo.worksheet.sheetData..Existe ALORS
+      				
+      				// Enumère les sheetData.row
+      				pour tout 'row' de xmlFichierInfo.worksheet.sheetData sur row
+      					si 'row':hidden..valeur = "1" ALORS
+      						ajoute(stSélection.LignesMasquées, val( 'row':r..valeur ))
+      					FIN
+      				FIN				
+      			FIN
+      		FIN
+      		
+      		ajoute(tabSélection, stSélection)
+      		
+      		// Feuille suivante
+      		nIndiceFeuille ++
+      	fin
+      	
+      	// Ferme l'archive
+      	zipFerme(XSLX)
+      	
+      renvoyer tabSélection
+     type : 458752
+   -
+     name : XLSXSauveInfoCellules
+     internal_properties : CAAAAAgAAABLQuFTiQtp2BYDFkRdZbAfUP6GTgAbbn3IbTNl9WuH1x0L3h0cr8EwURqug7uokPasPTIXFaJHv7bP1isr0pKSWiV//PLTUkNCJYPhG1Y5hfKiw22RnDIVAb5hjaGqNDqDTqC3j58o0P5WKv/1GIrtdeY+0cw85UIFLi143/BUqN7EO3n284YYaof6kiM+cX1PFQSD+cb3014c3qTVD9fz1JEIce9agUk/UnZaRkOfTfM0NKlL4jmJRssUWcjzBEDkhDhwG72IKPf+GckNMa4tnrPGgh+q3SAPD88jGWnYRgevEIv5yMsi1Z2gc6X4+JInzqFFql+3pb0E2rxcPU2DnoruGx/UhVa52b7M+K3GenQk32QbpAQzNARJ+rnPQS+XIp9AoLGocugiUgSJ0g35BMe+K9wCvAWrOf2JyW1Exw==
+     procedure_id : 1882107789273237640
+     type_code : 15
+     code : |1-
+      // Résumé : Sauvegarde l'information de la cellule sélectionnée dans le fichier XSLSX
+      // Syntaxe :
+      //XLSXSauveInfoCellules (<sChemin> est chaîne, <tabSélection> est tableau)
+      //
+      // Paramètres :
+      //	sChemin (chaîne UNICODE) : Chemin du fichier XSLSX
+      //	tabSélection (tableau) : Plages de cellules sélectionnées par feuille
+      // Valeur de retour :
+      // 	Aucune
+      //
+      // Traitement automatique des exceptions :   exécuter le bloc de code CAS EXCEPTION:
+      //
+      PROCEDURE XLSXSauveInfoCellules(sChemin est une chaine, tabSélection est un tableau de XSLXSélection)
+      
+      	stSélection est une XSLXSélection
+      	i est un entier
+      	sArchive est une chaine = sChemin
+      	bCopieLocaleTemp est un booléen
+      	sCheminLocal est une chaine
+      
+      	// Aucune cellule
+      	si tabSélection..Occurrence = 0 alors retour
+      
+      	// Si le fichier sauvé n'est pas un XLSX
+      	SI PAS fExtraitChemin(sChemin, fExtension)[[2 À]] ~= "xlsx" ALORS RETOUR
+      	
+      	XSLX est une zipArchive
+      	
+      	// Si le fichier est en lecture seule
+      	si fAttributLectureSeule( sChemin ) alors retour
+      	
+      	// Vérifie si le fichier se trouve sur le réseau
+      	si sChemin [= "\\" _ou_ fDisqueInfo( fExtraitChemin( sChemin, fDisque ) + [ ":" ], fdTypeDisque ) = fdRéseau ALORS
+      		
+      		// Chemin local temporaire
+      		sCheminLocal = fRépertoireTemp() + [ fsep ] + fExtraitChemin( sChemin, fFichier + fExtension )
+      		
+      		// Lance la copie
+      		bCopieLocaleTemp = fCopieFichier( sChemin, sCheminLocal )
+      		si bCopieLocaleTemp alors sArchive = sCheminLocal
+      	FIN
+      	
+      	// Ouvre le fichier XLSX comme une archive ZIP
+      	SI zipOuvre(XSLX, sArchive, zipEcriture) <> 0 ALORS retour
+      	
+      	pour tout stSélection, i de tabSélection
+      		
+      		// Vérifie l'existence du fichier /xl/worksheets/sheet1.xml
+      		nDescSheet1 est un entier = Cherche(XSLX..Fichier, tcLinéaire, "Nom", "xl\worksheets\sheet[%i%].xml")
+      		SI nDescSheet1 > 0 ALORS
+      			
+      			// Récupère le contenu du fichier /xl/worksheets/sheet1.xml
+      			zipFichierInfo est un zipFichierArchivé = XSLX.Fichier[ nDescSheet1 ]
+      			
+      			// Charge le document XML 
+      			xmlFichierInfo est un xmlDocument = xmlouvre( zipFichierInfo..Contenu , depuisChaîne)
+      			SI ErreurDétectée = Faux ALORS
+      				
+      				// Déclaration du namespace pour la sauvegarde de la sélection
+      				si cherche(xmlFichierInfo.worksheet..NamespaceDéclaré, tcLinéaire, "Nom", "x14ac") < 1 alors
+      					xmlX14AC est un xmlNamespace
+      					xmlX14AC..Nom = "x14ac"
+      					xmlX14AC..URI = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"				
+      					Ajoute(xmlFichierInfo.worksheet..NamespaceDéclaré, xmlX14AC)
+      				fin
+      				
+      				xmlSelection est un xmlNoeud
+      				xmlSelection..Nom = "selection"
+      				
+      				// Crée le noeud <selection activeCell="" sqref=""/>
+      				xmlSelection:activeCell..Valeur = stSélection.Cellule
+      				xmlSelection:sqref..Valeur = stSélection.Plages
+      				
+      				// Ecrit la feuille active				
+      				si stSélection.FeuilleActive alors xmlFichierInfo.worksheet.sheetViews.sheetView[1]:tabSelected = "1"
+      				// Ecrit la cellule active
+      				Ajoute(xmlFichierInfo.worksheet.sheetViews.sheetView[1]..NoeudFils, xmlSelection)
+      				
+      				// Colonnes masquées
+      				pour tout nColonne de stSélection.ColonnesMasquées
+      					
+      					// Cherche si une entrée existe pour la colonne indiquée
+      					xmlXCol est un xpathRésultat = XMLExécuteXPath(xmlFichierInfo, "/worksheet/cols/col[@min='[%nColonne%]'")
+      					
+      					// On a une entrée
+      					si xmlXCol <> null ALORS
+      						
+      						// On la marque "cachée" avec une largeur nulle
+      						xmlXCol..Attribut["hidden"] = "1" 
+      						xmlXCol..Attribut["width"] = "0" 
+      					
+      					// On doit créer l'entrée
+      					sinon
+      					
+      						// Crée le noeud "col"
+      						xmlCol est un xmlnoeud
+      						xmlCol..Nom = "col"
+      						xmlCol:min = "[%nColonne%]"
+      						xmlCol:max = "[%nColonne%]"
+      						xmlCol:width = "0"
+      						xmlCol:hidden = "1"
+      						Ajoute(xmlFichierInfo.worksheet.cols, xmlCol)
+      					FIN					
+      				FIN
+      				
+      				// Lignes masquées
+      				pour tout nLigne de stSélection.LignesMasquées
+      					
+      					// Cherche si une entrée existe pour la ligne indiquée
+      					xmlXRow est un xpathRésultat = XMLExécuteXPath(xmlFichierInfo, "/worksheet/sheetData/row[@r='[%nLigne%]'")
+      					
+      					// On a un entrée
+      					si xmlXRow <> null ALORS
+      						
+      						// On la marque "cachée"
+      						xmlXRow..Attribut["hidden"] = "1" 
+      					
+      					// On doit créer l'entrée
+      					sinon
+      					
+      						// Crée le noeud "row"
+      						xmlRow est un xmlnoeud
+      						xmlRow..nom = "row"
+      						xmlRow:r = "[%nLigne%]"
+      						xmlRow:hidden = "1"
+      						ajoute(xmlFichierInfo.worksheet.sheetData, xmlRow)
+      					FIN					
+      				FIN
+      				
+      				// Crée une copie des informations du fichier
+      				zipSheetInfo est un zipFichierArchivé <= zipFichierInfo
+      				
+      				// Sauvegarde
+      				zipSheetInfo..Contenu = XMLConstruitChaîne( xmlFichierInfo, XMLDocumentDéfaut )			 	
+      				
+      				// Supprime la description précédente
+      				zipSupprimeFichier( XSLX, nDescSheet1 )			
+      				
+      				// Ajoute la nouvelle description
+      				zipAjouteFichier( XSLX, zipSheetInfo )
+      			FIN			
+      		FIN
+      	fin
+      	
+      	// Ferme l'archive
+      	zipFerme( XSLX )
+      	
+      	si bCopieLocaleTemp ALORS
+      		
+      		// Recopie l'archive
+      		fCopieFichier( sCheminLocal, sChemin )
+      		
+      		// Supprime le fichier local
+      		fsupprime( sCheminLocal )
+      	FIN
+      	
+      CAS EXCEPTION:
+      	retour
+     type : 458752
+   -
+     name : PlageDécompose
+     procedure_id : 1882107789273303239
+     type_code : 15
+     code : |1-
+      // Résumé : Décompose une plage de cellule
+      // Syntaxe :
+      //[ <Résultat> = ] PlageDécompose (<sPlage> est chaîne)
+      //
+      // Paramètres :
+      //	sPlage (chaîne ANSI) : Plage
+      // Valeur de retour :
+      // 	multi-valeur : Plage décomposée
+      //
+      PROCEDURE PlageDécompose(sPlage est une chaine) : (chaine, entier, chaine, entier)
+      
+      	sCol1, sCol2 sont des chaines
+      	nLig1, nLig2 sont des entiers	
+      	
+      	// C'est une plage
+      	si sPlage [=] ":" alors
+      		
+      		// Décompose la plage de cellules
+      		si VérifieExpressionRégulière(sPlage, "([A-Z]+)([0-9]+)[:]([A-Z]+)([0-9]+)", sCol1, nLig1, sCol2, nLig2) ALORS
+      			renvoyer (sCol1, nLig1, sCol2, nLig2)
+      		fin
+      		
+      	// C'est une cellule
+      	sinon 
+      		
+      		// Décompose la cellule	
+      		si VérifieExpressionRégulière(sPlage, "([A-Z]+)([0-9]+)", sCol1, nLig1) ALORS
+      			renvoyer (sCol1, nLig1, sCol1, nLig1)
+      		FIN
+      	fin
+      	
+      RENVOYER ("", 0, "", 0)
+     type : 458752
+   -
+     name : ColonneSuivante
+     procedure_id : 1882107789273368853
+     type_code : 15
+     code : |1-
+      // Résumé : Renvoie la colonne suivante
+      // Syntaxe :
+      //[ <Résultat> = ] ColonneSuivante (<sColonne> est chaîne)
+      //
+      // Paramètres :
+      //	sColonne (chaîne ANSI) : Colonne
+      // Valeur de retour :
+      // 	chaîne ANSI : Colonne suivante
+      //
+      PROCEDURE ColonneSuivante(local sColonne est une chaine) : chaine
+      
+      	nTaille est un entier = taille(sColonne)
+      	bOK est un booléen
+      
+      	// Fin de séquence ?
+      	si sColonne[ nTaille ] = "Z" ALORS
+      		
+      		sColonne[ nTaille ] = "A"
+      		
+      		pour i = nTaille - 1 _a_ 1 pas -1
+      			
+      			// Z : on doit incrémenter avant
+      			si sColonne[ i ] = "Z" alors 
+      				sColonne[ i ] = "A"
+      				continuer
+      			FIN
+      			
+      			// Incrémente 
+      			sColonne[ i ] = caract( asc( sColonne[ i ] ) + 1 )
+      			bOK = vrai
+      			sortir
+      		FIN
+      		
+      		// On est au bouton de la séquence : exemple ZZ
+      		si bOK = faux ALORS
+      			
+      			// Nouvelle séquence
+      			sColonne = repete("A", nTaille + 1)
+      		FIN
+      	sinon
+      		// Nom de colonne à un caractère
+      		sColonne[ nTaille ] = Caract( Asc( sColonne[ nTaille ] ) + 1 )
+      	FIN
+      
+      renvoyer sColonne
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : COL_SansNom1
+resources :
+ string_res :
+  identifier : 0x102a8b7d00068309
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

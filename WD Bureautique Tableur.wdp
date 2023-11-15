@@ -1,0 +1,96 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : WD Bureautique Tableur
+ major_version : 28
+ minor_version : 0
+ type : 4097
+ description : ""
+ subtype : 0
+project :
+ identifier : 0x0
+ internal_properties : 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
+ configurations :
+  -
+    name : Exécutable Windows 32 bits
+    internal_properties : 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
+    configuration_id : 9663666347216825994
+    type : 1
+    generation_name : WD Bureautique Tableur.exe
+    version :
+     major_version : 23
+     generation_version : 6
+     internal_generation_version : 9
+    icon_filename : .\description.ico
+    language : 1
+ elements :
+  identifier : 0x4a1452fa00d91b2e
+  elements :
+   -
+     name : FEN_TABLEUR
+     identifier : 0x4a1540ff00e46563
+     internal_properties : CAAAAAgAAAAIBnAsm8Boc3LJ7AvjQi6ycjG54dybKylOCxdpqnAkhESu0RTTdVr2HwP9+7s1zcMNFQ==
+     physical_name : .\FEN_TABLEUR.wdw
+     type : 2
+   -
+     name : COL_TABLEUR
+     identifier : 0x4a1e96ff01a3467e
+     internal_properties : CAAAAAgAAAB716PnxIGpsrMT8U4JBpaUc3IK0tsx9KiqgMWOHMTWItoKkiR4Qc6c4ES+Ovr2gnZe5g==
+     physical_name : .\COL_TABLEUR.wdg
+     type : 7
+   -
+     name : TEST_TABLEUR
+     identifier : 0x4aec58ec002773e0
+     internal_properties : CAAAAAgAAAB23F5CYd5WWWSGPAwpIwJNKpnxOYoo2nZCjtO4QMBURLQO1p2ZZ1UHRfnj3aVbJ5lj4w==
+     physical_name : .\TEST_TABLEUR.wxt
+     type : 17
+  other_elements : []
+  net_assemblies : []
+  uwp_api : []
+  external_components : []
+  internal_components :
+   -
+     physical_name : .\WD Bureautique\WD Bureautique.wci
+ report_and_queries_enabled : false
+ data_directory : <RepExeOuRepDonneesCommun>
+ common_generation_directory : true
+ languages :
+  - fr-FR
+ code_elements :
+  internal_properties : CAAAAAgAAACb4DUlN8jShukwuhUdHVXsPms4LpjGvfI5oR42jbTYE05+yZihq/R+RYxmC8tXHDjhPmSEmtrG4fxVQvbSsDngW4E3ckxEsnM=
+  type_code : 0
+  p_codes :
+   -
+     internal_properties : CAAAAAgAAACtOVMnOXfZu2FdEwWdekka/Rveq1o1yfPwX1Dz1u0GfZz4As4IDokaQl9dDYhwJmilKVdNKX+5oMDB2k/Q+dUIut7P2znu+EOTlqqmnpyFWIO7xLzLKsInMM8X5jDTwM1+exx8P9ieG7iw6ohLyqQr31qev0Vuy3cVNO3KmA8idsidgxt4sCwvs4MKIZdyLfqwd9QKywZCc8IkLA==
+     code : |1-
+      
+      constant TABLEUR_EXTENSION_XLSX = "xlsx"
+      
+      // Déclare au composant Bureautique l'extension gérée
+      // Le composant gère lui-même l'association depuis la ligne de commande (/shellassoc, /shellunassoc)
+      DéclareExtensions( TABLEUR_EXTENSION_XLSX, "Fichiers Excel" )
+     type : 196608
+   -
+     type : 196621
+   -
+     type : 196627
+     enabled : false
+  orphans :
+   -
+     name : Exécutable Windows 32 bits
+     identifier : 0x4a1452fa00da1b2e
+     code_elements :
+      type_code : 159
+      p_codes : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+rad :
+ internal_properties : CAAAAAgAAABhIL0UXeZmxDJxY3Xy0Q==
+project_explorer :
+ explorer_type : project
+resources :
+ string_res :
+  identifier : 0x0
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAAAd98VSJfHHqE3P0QHwrwdhn7ig8dWBR6valpUTgnAMTVXiDg==
